@@ -13,7 +13,7 @@ class UserQuestionPacketAnswer extends Model
         'user_id',
         'question_packet_id',
         'question_id',
-        'answer_id'
+        'question_answer_id'
     ];
 
     public function user()
@@ -34,5 +34,17 @@ class UserQuestionPacketAnswer extends Model
     public function questionAnswer()
     {
         return $this->belongsTo(QuestionAnswer::class);
+    }
+
+    public static function getAnswers( $user_id, $question_packet_id )
+    {
+        return UserQuestionPacketAnswer::where([['user_id', $user_id], ['question_packet_id', $question_packet_id]])
+                                        ->orderBy('question_id')->get();
+    }
+
+    public static function getAnswer( $user_id, $question_id )
+    {
+        return UserQuestionPacketAnswer::where([['user_id', $user_id], ['question_id', $question_id]])
+                                        ->first();
     }
 }

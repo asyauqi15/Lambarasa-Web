@@ -14,10 +14,11 @@ class CreateUserQuestionPacketAnswersTable extends Migration
     public function up()
     {
         Schema::create('user_question_packet_answers', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('user_id');
             $table->foreignId('question_packet_id');
             $table->foreignId('question_id');
-            $table->foreignId('question_answer_id');
+            $table->foreignId('question_answer_id')->nullable();
             $table->timestamps();
         });
     }

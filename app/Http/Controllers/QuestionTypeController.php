@@ -54,4 +54,18 @@ class QuestionTypeController extends Controller
 
         return redirect()->back();
     }
+
+    public function release(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required',
+        ]);
+
+        $qt = QuestionType::find($request->id);
+
+        if($qt->status) $qt->update(['status' => 0]);
+        else $qt->update(['status' => 1]);
+
+        return redirect()->back();
+    }
 }

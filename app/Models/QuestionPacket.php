@@ -17,6 +17,7 @@ class QuestionPacket extends Model
         'banner_path',
         'amount',
         'time',
+        'status',
     ];
 
     public function questions()
@@ -37,5 +38,10 @@ class QuestionPacket extends Model
     public function userQuestionPacketAnswers()
     {
         return $this->hasMany(UserQuestionPacketAnswer::class);
+    }
+
+    public function getUserPacket( $user_id )
+    {
+        return $this->hasMany(UserQuestionPacket::class)->where('user_id', $user_id)->first();
     }
 }

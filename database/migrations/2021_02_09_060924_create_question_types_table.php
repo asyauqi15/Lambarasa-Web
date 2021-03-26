@@ -19,6 +19,7 @@ class CreateQuestionTypesTable extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('banner_path')->nullable();
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }

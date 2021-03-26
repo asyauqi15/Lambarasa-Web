@@ -21,6 +21,7 @@ class CreateQuestionPacketsTable extends Migration
             $table->text('banner_path')->nullable();
             $table->integer('amount');
             $table->integer('time');
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }

@@ -15,6 +15,7 @@ class QuestionType extends Model
         'name',
         'slug',
         'banner_path',
+        'status',
     ];
 
     protected $rules = [

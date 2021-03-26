@@ -13,7 +13,7 @@ class Question extends Model
         'id',
         'question_packet_id',
         'question',
-        'true_answer',
+        'question_answer_id',
         'explanation'
     ];
 
@@ -24,7 +24,7 @@ class Question extends Model
 
     public function answers()
     {
-        return $this->hasMany(QuestionAnswer::class);
+        return $this->hasMany(QuestionAnswer::class)->get();
     }
 
     public function userQuestionPacketAnswers()

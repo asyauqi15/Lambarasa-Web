@@ -52,4 +52,18 @@ class ExamTypeController extends Controller
 
         return redirect()->back();
     }
+
+    public function release(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required',
+        ]);
+
+        $et = ExamType::find($request->id);
+
+        if($et->status) $et->update(['status' => 0]);
+        else $et->update(['status' => 1]);
+
+        return redirect()->back();
+    }
 }

@@ -13,7 +13,11 @@ class UserQuestionPacket extends Model
         'user_id',
         'question_packet_id',
         'completed',
-        'score'
+        'score',
+        'ended_at',
+        'trueAnswer',
+        'falseAnswer',
+        'nullAnswer',
     ];
 
     public function user()
@@ -24,5 +28,11 @@ class UserQuestionPacket extends Model
     public function questionPacket()
     {
         return $this->belongsTo(QuestionPacket::class);
+    }
+
+    public static function getPacket( $user_id, $question_packet_id )
+    {
+        return UserQuestionPacket::where([['user_id', $user_id],
+                                          ['question_packet_id', $question_packet_id]])->first();
     }
 }

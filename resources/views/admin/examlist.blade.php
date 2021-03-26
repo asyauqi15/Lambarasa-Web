@@ -50,7 +50,40 @@
           </div>
 
           <div class="card-footer bg-transparent text-center">
-            <a class="btn btn-primary" href="{{ route('admin.questiontype.list', $exam->slug) }}">Lihat</a>
+            <table class="text-left ml-1 mb-3">
+              <tr>
+                <td>Jumlah Tipe Soal</td>
+                <td class="px-2">:</td>
+                <td>{{ $exam->questionTypes()->count() }}</td>
+              </tr>
+              <tr>
+                <td>Jumlah Paket Soal</td>
+                <td class="px-2">:</td>
+                <td>{{ $exam->packetsCount() }}</td>
+              </tr>
+              <tr>
+                <td>Status</td>
+                <td class="px-2">:</td>
+                @if( $exam->status )
+                  <td class="text-success">Sudah dirilis</td>
+                @else
+                  <td class="text-danger">Belum dirilis</td>
+                @endif
+              </tr>
+            </table>
+            <a class="btn btn-primary" style="width:100%;" href="{{ route('admin.questiontype.list', $exam->slug) }}">Lihat</a>
+            <br>
+            @if( $exam->status )
+              <button class="btn btn-danger mt-2" style="width:100%;" data-toggle="modal" data-target="#releasesForm"
+                onclick="changeReleasesValue( {{ $exam->id }}, '{{ $exam->name }}' )">
+                Tarik Jenis Ujian
+              </button>
+            @else
+              <button class="btn btn-warning mt-2" style="width:100%;" data-toggle="modal" data-target="#releasesForm"
+                onclick="changeReleasesValue( {{ $exam->id }}, '{{ $exam->name }}' )">
+                Rilis Jenis Ujian
+              </button>
+            @endif
           </div>
 
         </div>
@@ -137,6 +170,30 @@
     </div>
   </div>
 </div>
+
+<!-- Release's Form Modal-->
+<div class="modal fade" id="releasesForm" tabindex="-1" aria-labelledby="releasesFormLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="releasesFormLabel">Ubah Status Rilis Jenis Ujian</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" action="{{ route('examtype.release') }}">
+        @csrf
+        <div class="modal-body">
+          <input type="number" id="examIdRelease" name="id" hidden>
+          <p>Yakin ingin mengubah status rilis jenis ujian <span id="examNameRelease"></span>?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning">Ubah Status</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 @endsection
 
 @push('topscripts')
@@ -154,6 +211,15 @@
   {
     let examId = document.getElementById("examIdDelete");
     let examName = document.getElementById("examNameDelete");
+
+    examId.value = id;
+    examName.innerHTML = name;
+  }
+
+  function changeReleasesValue( id, name )
+  {
+    let examId = document.getElementById("examIdRelease");
+    let examName = document.getElementById("examNameRelease");
 
     examId.value = id;
     examName.innerHTML = name;

@@ -45,7 +45,7 @@
         <li class="nav-item"><a class="nav-link text-dark" href="#">Contact</a></li>
         <li class="nav-item"><a class="nav-link text-dark" href="#">Blog</a></li>
         @if (Auth::check())
-          <li class="nav-item pt-1"><a class="btn btn-sm btn-primary nav-btn" href="">DASHBOARD</a></li>
+          <li class="nav-item pt-1"><a class="btn btn-sm btn-primary nav-btn" href="{{ route('dashboard') }}">DASHBOARD</a></li>
           <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="btn btn-danger btn-sm mt-1">Keluar</button>

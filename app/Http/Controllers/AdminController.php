@@ -27,7 +27,7 @@ class AdminController extends Controller
     public function questionTypeList($slug)
     {
         $exam = ExamType::where('slug', $slug)->first();
-        $questionTypes = $exam->questionTypes()->get();
+        $questionTypes = $exam->questionTypes();
         return view('admin.questionTypeList', ['questionTypes' => $questionTypes,
                                                'exam' => $exam]);
     }
@@ -36,6 +36,7 @@ class AdminController extends Controller
     {
         $questionPacket = QuestionPacket::where('slug', $packet)->first();
         $questions = $questionPacket->questions();
+
         return view('admin.questionList', ['questions' => $questions,
                                            'questionPacket' => $questionPacket]);
     }

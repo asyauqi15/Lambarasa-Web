@@ -14,10 +14,15 @@ class CreateUserQuestionPacketsTable extends Migration
     public function up()
     {
         Schema::create('user_question_packets', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('user_id');
             $table->foreignId('question_packet_id');
-            $table->boolean('completed');
+            $table->boolean('completed')->default(0);
             $table->float('score', 8, 2)->nullable();
+            $table->timestamp('ended_at')->nullable();
+            $table->unsignedSmallInteger('trueAnswer')->nullable();
+            $table->unsignedSmallInteger('falseAnswer')->nullable();
+            $table->unsignedSmallInteger('nullAnswer')->nullable();
             $table->timestamps();
         });
     }

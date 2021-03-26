@@ -31,7 +31,21 @@
       @foreach ($questionTypes as $questionType)
       <div class="card">
         <div class="card-header bg-primary">
-          <h3 class="card-title">{{ $questionType->name }}</h3>
+          <h3 class="card-title">
+          @if ( $questionType->status )
+            <button type="button" class="btn btn-tool text-danger" data-toggle="modal" data-target="#releasesTypeForm"
+              onclick="changeReleasesTypeValue( {{ $questionType->id }}, '{{ $questionType->name }}' )">
+              <i class="fa fa-door-closed"></i>
+            </button>
+            {{ $questionType->name }}
+          @else
+            <button type="button" class="btn btn-tool text-warning" data-toggle="modal" data-target="#releasesTypeForm"
+              onclick="changeReleasesTypeValue( {{ $questionType->id }}, '{{ $questionType->name }}' )">
+              <i class="fa fa-door-open"></i>
+            </button>
+            {{ $questionType->name }} {{ $questionType->status ? '' : '(Belum rilis)' }}</h3>
+          @endif
+          </h3>
           <div class="card-tools">
             <button type="button" class="btn btn-tool text-light" data-toggle="modal" data-target="#createsPacketForm"
               onclick="changeCreatesPacketValue( {{ $questionType->id }}, '{{ $questionType->name }}' )">
@@ -73,7 +87,40 @@
                 </div>
 
                 <div class="card-footer bg-transparent text-center">
-                  <a class="btn btn-primary" href="{{ route('admin.question.list', array($exam->slug, $questionPacket->slug)) }}">Lihat</a>
+                  <table class="text-left ml-1 mb-3">
+                    <tr>
+                      <td>Jumlah soal</td>
+                      <td class="px-2">:</td>
+                      <td>{{ $questionPacket->questions()->count() }}</td>
+                    </tr>
+                    <tr>
+                      <td>Waktu pengerjaan</td>
+                      <td class="px-2">:</td>
+                      <td>{{ $questionPacket->time }} Menit</td>
+                    </tr>
+                    <tr>
+                      <td>Status</td>
+                      <td class="px-2">:</td>
+                      @if( $questionPacket->status )
+                        <td class="text-success">Sudah dirilis</td>
+                      @else
+                        <td class="text-danger">Belum dirilis</td>
+                      @endif
+                    </tr>
+                  </table>
+                  <a class="btn btn-primary" style="width:100%;" href="{{ route('admin.question.list', array($exam->slug, $questionPacket->slug)) }}">Lihat</a>
+                  <br>
+                  @if( $questionPacket->status )
+                    <button class="btn btn-danger mt-2" style="width:100%;" data-toggle="modal" data-target="#releasesPacketForm"
+                      onclick="changeReleasesPacketValue( {{ $questionPacket->id }}, '{{ $questionPacket->name }}' )">
+                      Tarik Paket Soal
+                    </button>
+                  @else
+                    <button class="btn btn-warning mt-2" style="width:100%;" data-toggle="modal" data-target="#releasesPacketForm"
+                      onclick="changeReleasesPacketValue( {{ $questionPacket->id }}, '{{ $questionPacket->name }}' )">
+                      Rilis Paket Soal
+                    </button>
+                  @endif
                 </div>
 
               </div>
@@ -159,6 +206,30 @@
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-danger">Hapus</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Release's Type Form Modal-->
+<div class="modal fade" id="releasesTypeForm" tabindex="-1" aria-labelledby="releasesTypeFormLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="releasesTypeFormLabel">Ubah Status Rilis Jenis Soal</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" action="{{ route('questiontype.release') }}">
+        @csrf
+        <div class="modal-body">
+          <input type="number" id="questionTypeIdRelease" name="id" hidden>
+          <p>Yakin ingin mengubah status rilis jenis soal <span id="questionTypeNameRelease"></span>?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning">Ubah Status</button>
         </div>
       </form>
     </div>
@@ -258,9 +329,33 @@
     </div>
   </div>
 </div>
+
+<!-- Release's Packet Form Modal-->
+<div class="modal fade" id="releasesPacketForm" tabindex="-1" aria-labelledby="releasesPacketFormLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="releasesPacketFormLabel">Ubah Status Rilis Paket Soal</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" action="{{ route('questionpacket.release') }}">
+        @csrf
+        <div class="modal-body">
+          <input type="number" id="questionPacketIdRelease" name="id" hidden>
+          <p>Yakin ingin mengubah status rilis paket soal <span id="questionPacketNameRelease"></span>?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning">Ubah Status</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 @endsection
 
-@push('scripts')
+@push('topscripts')
 <!-- Question Type -->
 <script type="text/javascript">
   function changeUpdatesTypeValue( id, name )
@@ -276,6 +371,15 @@
   {
     let questionTypeId = document.getElementById("questionTypeIdDelete");
     let questionTypeName = document.getElementById("questionTypeNameDelete");
+
+    questionTypeId.value = id;
+    questionTypeName.innerHTML = name;
+  }
+
+  function changeReleasesTypeValue( id, name )
+  {
+    let questionTypeId = document.getElementById("questionTypeIdRelease");
+    let questionTypeName = document.getElementById("questionTypeNameRelease");
 
     questionTypeId.value = id;
     questionTypeName.innerHTML = name;
@@ -312,6 +416,15 @@
   {
     let questionPacketId = document.getElementById("questionPacketIdDelete");
     let questionPacketName = document.getElementById("questionPacketNameDelete");
+
+    questionPacketId.value = id;
+    questionPacketName.innerHTML = name;
+  }
+
+  function changeReleasesPacketValue( id, name )
+  {
+    let questionPacketId = document.getElementById("questionPacketIdRelease");
+    let questionPacketName = document.getElementById("questionPacketNameRelease");
 
     questionPacketId.value = id;
     questionPacketName.innerHTML = name;

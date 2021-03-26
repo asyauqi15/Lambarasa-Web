@@ -86,4 +86,18 @@ class QuestionPacketController extends Controller
 
         return redirect()->back();
     }
+
+    public function release(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required',
+        ]);
+
+        $qp = QuestionPacket::find($request->id);
+
+        if($qp->status) $qp->update(['status' => 0]);
+        else $qp->update(['status' => 1]);
+
+        return redirect()->back();
+    }
 }
