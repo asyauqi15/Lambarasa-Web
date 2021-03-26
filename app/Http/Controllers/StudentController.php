@@ -117,30 +117,36 @@ class StudentController extends Controller
         $questionPacket = QuestionPacket::where('slug', $packet)->first();
         if( !$questionPacket || !$questionPacket->status ) return abort(404);
 
-        $userAnswers = UserQuestionPacketAnswer::getAnswers( Auth::user()->id, $questionPacket->id );
+        $userQuestionPacket = UserQuestionPacket::getPacket( Auth::user()->id, $questionPacket->id );
+        if( !$userQuestionPacket ) return abort(404);
+
         $questions = $questionPacket->questions();
 
-        $nullAnswer = 0;
-        $trueAnswer = 0;
-        $falseAnswer = 0;
-
-        for ( $i = 0 ; $i < $questions->count(); $i++)
+        if( !$userQuestionPacket->completed )
         {
-            if( $userAnswers[$i]->question_answer_id == NULL ) continue;
-            else if( $userAnswers[$i]->question_answer_id == $questions[$i]->question_answer_id ) $trueAnswer++;
-            else $falseAnswer++;
+            $userAnswers = UserQuestionPacketAnswer::getAnswers( Auth::user()->id, $questionPacket->id );
+
+            $nullAnswer = 0;
+            $trueAnswer = 0;
+            $falseAnswer = 0;
+
+            for ( $i = 0 ; $i < $questions->count(); $i++)
+            {
+                if( $userAnswers[$i]->question_answer_id == NULL ) $nullAnswer++;
+                else if( $userAnswers[$i]->question_answer_id == $questions[$i]->question_answer_id ) $trueAnswer++;
+                else $falseAnswer++;
+            }
+
+            $score = $trueAnswer / $questions->count();
+
+            $userQuestionPacket->update([
+                'completed' => '1',
+                'score' => $score,
+                'trueAnswer' => $trueAnswer,
+                'falseAnswer' => $falseAnswer,
+                'nullAnswer' => $nullAnswer,
+            ]);
         }
-
-        $score = $trueAnswer / $questions->count();
-
-        $userQuestionPacket = UserQuestionPacket::getPacket( Auth::user()->id, $questionPacket->id );
-        $userQuestionPacket->update([
-            'completed' => '1',
-            'score' => $score,
-            'trueAnswer' => $trueAnswer,
-            'falseAnswer' => $falseAnswer,
-            'nullAnswer' => $nullAnswer,
-        ]);
 
         return view('student.testResult', ['userQuestionPacket' => $userQuestionPacket,
                                            'questions' => $questions,
