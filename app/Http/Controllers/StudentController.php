@@ -29,7 +29,7 @@ class StudentController extends Controller
     public function examList()
     {
         $exams = ExamType::where('status', 1)->get();
-        return view('student.examlist', ['exams' => $exams]);
+        return view('student.examList', ['exams' => $exams]);
     }
 
     public function questionTypeList($slug)
