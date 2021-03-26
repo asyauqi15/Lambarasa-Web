@@ -44,7 +44,7 @@
                       <td>{{ $questionPacket->time }} Menit</td>
                     </tr>
                   </table>
-                  @if ( !$questionPacket->getUserPacket( Auth::user()->id )->completed )
+                  @if ( !$questionPacket->getUserPacket( Auth::user()->id ) || !$questionPacket->getUserPacket( Auth::user()->id )->completed )
                     <a class="btn btn-primary" style="width:100%;" href="{{ route('questionpacket.instruction', array($exam->slug, $questionPacket->slug)) }}">Kerjakan</a>
                   @else
                     <a class="btn btn-outline-primary" style="width:100%;" href="{{ route('test.result', array($exam->slug, $questionPacket->slug) ) }}">Lihat Hasil</a>
